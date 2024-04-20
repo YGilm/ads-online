@@ -14,11 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+
+from config import settings
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -26,6 +29,16 @@ schema_view = get_schema_view(
         default_version='v1',
         description="This API provides all backend functionality for the Ads Online platform",
 
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+schema_view_tasks = get_schema_view(
+    openapi.Info(
+        title="Tasks API Documentation",
+        default_version='v1',
+        description="Detailed documentation of task-related APIs",
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
@@ -41,7 +54,15 @@ urlpatterns = [
     # users
     path('', include('users.urls', namespace='users')),
 
+    # advertisement
+    path('', include('advertisement.urls', namespace='ads')),
+
     # documentation
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+    # redoc-tasks
+    path('api/redoc-tasks/', schema_view_tasks.with_ui('redoc', cache_timeout=0), name='schema-redoc-tasks'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
