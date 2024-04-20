@@ -10,4 +10,4 @@ pyjwt==2.8.0
 drf-yasg==1.21.7
 djoser==2.2.2
 Pillow==10.3.0
-IPython==8.23.0
+django-filter==24.2
