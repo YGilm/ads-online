@@ -57,6 +57,7 @@ class UserModelTests(TestCase):
 
 class PermissionsTests(TestCase):
     """Тесты для пользовательских разрешений."""
+
     def setUp(self):
         """Инициализация объектов для теста разрешений."""
         self.factory = APIRequestFactory()
