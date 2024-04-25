@@ -146,7 +146,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Настройка CORS
 CORS_ALLOWED_ORIGINS = [
-    os.getenv('CORS_ALLOWED_ORIGINS'),  # адрес вашего фронтенд-сервера
+    os.getenv('CORS_ALLOWED_ORIGINS'),  # адрес фронтенд-сервера
 ]
 CSRF_TRUSTED_ORIGINS = [
     os.getenv('CSRF_TRUSTED_ORIGINS'),  # адрес бэкенд-сервера
@@ -157,7 +157,6 @@ CORS_ALLOW_ALL_ORIGINS = False
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -165,13 +164,13 @@ REST_FRAMEWORK = {
 }
 # Настройки срока действия токенов
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 # Настройки для Djoser
-
 DJOSER = {
+    'ACTIVATION_URL': 'http://example.com/activate/{uid}/{token}', # Изменить на ссылку фронтенда
     'SERIALIZERS': {
         'user_create': 'users.serializers.CustomUserCreateSerializer',
         'user': 'djoser.serializers.UserSerializer',
@@ -179,7 +178,7 @@ DJOSER = {
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
     },
     'USER_CREATE_PASSWORD_RETYPE': True,
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'http://example.com/password/reset/confirm/{uid}/{token}', # Изменить на ссылку фронтенда
     'SEND_ACTIVATION_EMAIL': True,
     'USERNAME_FIELD': 'email',
     'LOGIN_FIELD': 'email',
@@ -198,9 +197,14 @@ AUTH_USER_MODEL = 'users.User'
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL') == 'True'
+
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL') == 'True'
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
 
 LOGGING = {
     'version': 1,
